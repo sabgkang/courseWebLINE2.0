@@ -199,6 +199,40 @@ function showDemoLayout(e) {
   });
 }
 
+function searchExamplesFor(value){ //, product) {
+//    function titleContains(value) {
+//        return function (title) {
+//            var text = "";
+//
+//            if (title) {
+//                text = title[product] || title["kendo-ui"] || title["aspnet-mvc"] || title["aspnet-core"];
+//            }
+//
+//            return text.indexOf(value) >= 0;
+//        };
+//    }
+
+  if (value.length < 2) {
+        searchDataSource.filter(null);
+    } else {
+        var filter = { logic: "and", filters: []};
+        var words = value.split(" ");
+
+        for (var i = 0; i < words.length; i ++) {
+            var word = words[i];
+            filter.filters.push({
+                logic: "or",
+                filters: [
+                    //{ field: "section", operator: "contains", value: word },
+                    { field: "課程名稱", operator: "contains", value: word },
+                    //{ field: "title", operator: titleContains(word) }
+                ]
+            });
+        }
+
+        searchDataSource.filter(filter);
+    }
+}
 
 window.app = new kendo.mobile.Application($(document.body), {
   layout: "examples",
