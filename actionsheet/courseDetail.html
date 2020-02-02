@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" href="styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="styles/kendo.default.min.css" />
+    <link rel="stylesheet" href="styles/kendo.mobile.all.min.css" />
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/kendo.all.min.js"></script>
+    
+</head>
+<body>
+
+<div data-role="view" data-title="課程細節" id="actionsheet-view" data-use-native-scrolling="true" style="font-family:  'Noto Sans TC' " data-show="dataAlreadyShown">
+    <!--<h3 id="actionResult">TEST</h3>-->
+    <ul data-role="listview" data-source="courseDetail" data-template="courseItemTemplate" class="courseList"></ul>
+</div>
+
+<script type="script/x-kendo-template" id="courseItemTemplate">
+    <a class="reply km-primary km-button-right"
+    style="color: white" 
+    data-role="button"
+    onclick="報名(#:ID#)" 
+    id = "報名按鈕#:ID#"
+    data-actionsheet-context="#:ID#">報名</a>
+    <h4>課程編號: #: 課程編號 #</h4>
+    <h4>課程名稱: #: 課程名稱 #</h4>
+    <h4>老師姓名: #: 老師姓名 #</h4>
+    <h4>助教姓名: #: 助教姓名 #</h4>
+    <h4>上課時間: #: 上課時間 #</span>    
+    <h4>燃燒熱量: #: 燃燒熱量 #</h4>  
+    <h4>課程人數: #: 課程人數 #</h4> 
+    <h4>課程費用: #: 課程費用#</span>    
+    <h4>其他說明: #: 其他說明 #</h4>
+    <hr>
+    <h4>報名人數: #: 報名人數 #</h4>
+    <h4>繳費人數: #: 繳費人數 #</h4> 
+</script>
+
+<script>
+    var hrefString = window.location.href;
+    var inputParamString = hrefString.split("?");
+    var inputParam = inputParamString[2].split("&")
+    var courseId = inputParam[0].split("=")[1];
+    
+    //var courseNum = parseInt(courseId.substring(1,5));
+    //console.log(hrefString, courseId);
+  
+    var courseDetail=[];
+    var idNum = 1;
+    courseData.forEach(function(course, ind, arr){
+      if (course[0]==courseId) {
+        console.log(course, ind);
+        var courseDetailItem = {
+          "ID": idNum,
+          "課程編號": course[0],
+          "課程名稱": course[1],
+          "老師姓名": course[2],
+          "助教姓名": course[9],          
+          "上課時間": course[3],  
+          "燃燒熱量": course[4],
+          "課程人數": course[6],
+          "課程費用": course[5],
+          "其他說明": course[10],
+          "報名人數": course[7],
+          "繳費人數": course[8],          
+        };
+        courseDetail.push(courseDetailItem);
+      }
+    });
+
+  
+//    var courseAllData = [
+//        {
+//            ID: 0,
+//            課程編號: "U0001",
+//            課程名稱: "測試 #1",
+//            老師姓名: "測試老師 #1",
+//            上課時間: "2020-01-0918:30"
+//        },
+//        
+//        {
+//            ID: 2,
+//            課程編號: "U0002",
+//            課程名稱: "測試 #2",
+//            老師姓名: "測試老師 #2",
+//            上課時間: "2020-02-02 18:0"
+//        },        
+//    ];
+//  
+//    courseDetail.push(courseAllData[0], courseAllData[1]);
+    
+  function setEnabled($a, Enabled ){
+      $a.each(function(i, a){          
+          var en = a.onclick !== null;        
+          if(en == Enabled)return;
+          if(Enabled){
+              a.onclick = $(a).data('orgClick');            
+          }
+          else
+          {
+              $(a).data('orgClick',a.onclick);
+              a.onclick = null;
+          }
+      });
+  }
+  function 報名(id) {
+    console.log("報名",id, inputParam);
+    $("#報名按鈕"+id.toString()).text("已報名");
+    $("#報名按鈕"+id.toString()).css("background-color", "grey");    
+    setEnabled($('#報名按鈕'+id.toString()), false); 
+  }
+  
+  function dataAlreadyShown(){
+    console.log("data-view 已顯示");    
+  }
+  
+</script>
+
+
+<script>
+  //以下必須 remark 掉，不然會有問題
+  //var app = new kendo.mobile.Application(document.body, { skin: "nova" });
+</script>
+
+</body>
+</html>

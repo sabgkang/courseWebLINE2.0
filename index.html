@@ -17,11 +17,13 @@
 <!--  <link href="/kendo-ui/content/shared/styles/console.css" rel="stylesheet" />-->
 <!--  <link href="/kendo-ui/content/mobile/examples.css" rel="stylesheet" />-->
   <link href="css/examples.css" rel="stylesheet" />
-  
-
+     
   <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
   <script src="https://kendo.cdn.telerik.com/2020.1.114/js/kendo.all.min.js"></script>
   <script src="https://kendo.cdn.telerik.com/2020.1.114/js/kendo.timezones.min.js"></script>
+  
+  <link rel="stylesheet" href="css/loading.css" />
+  <script src="js/loading.js"></script>  
 
 </head>
 
@@ -87,7 +89,7 @@
     <div style="height: 15px"></div>
 
     <span class="報名課程title">報名課程</span>
-    <a class="reply km-primary km-button-right" href="#actionsheet/pullToRefresh.html" style="color: white; margin-right: 10px; " // added by Paul Kang data-role="button" onclick="">查看日曆</a>
+    <a class="reply km-primary km-button-right" href="#actionsheet/團課日程.html" style="color: white; margin-right: 10px; " data-role="button" onclick="">查看日曆</a>
 
     <div style="height: 20px"></div>
 
@@ -104,8 +106,8 @@
         </script>
 
       <script type="text/x-kendo-template" id="nav-template">
-        <a href="#: url #" class="課程名稱">#: 課程名稱 # #= data.new ? '<span class="km-badge">NEW</span>' : '' #</a>
-        </script>
+        <a href="#: url #" class="課程名稱">#: 課程名稱 # <br>#: 老師姓名 # <span style="float:right; margin-right: 20px" >#: 課程時間 #</span></a>
+      </script>
 
     </ul>
 
@@ -121,42 +123,40 @@
     </header>
   </div>
 
-  <div id="source-code-view" data-transition="fade" data-title="Source code" data-show="showSourceCode" data-role="view" data-persist="true" data-stretch="true" data-use-native-scrolling="true">
-    <header data-role="header">
-      <div data-role="navbar">
-        <span data-role="view-title"></span>
-        <a data-align="right" data-click="openDojo" data-role="button">Edit</a>
-        <a data-align="right" href="#:back" data-role="button" data-icon="close"></a>
-      </div>
-    </header>
-
-    <div id="source-code-container"></div>
-  </div>
-
-<!--
-  <script src="/kendo-ui/content/shared/js/example-datasources.js"></script>
-  <script src="/kendo-ui/content/shared/js/mobile-examples.js"></script>
-  <script src="/kendo-ui/content/shared/js/console.js"></script>
-  <script src="/kendo-ui/content/shared/js/prettify.js"></script>
--->
 <!--  <script src="js/example-datasources.js"></script>-->
-  <script src="js/mobile-examples.js"></script>
+  <script src="js/data-process.js"></script>
   <script src="js/prettify.js"></script> 
   
   <script>
     // added by Paul Kang
-    var paramToSend = "TEST";
+    var paramToSend = "";
     var inputParamString = location.search;
     var inputParam = inputParamString.split("&");
-    //console.log(inputParam);
-    //checkInputParam();
+    var displayName, userId, pictureUrl;
+    var inputError = false;
+    var useLocalAPIs = false;
+    
+    //var memberData = [];
+    //var dataToAdd = [];    
+    var courseData=[];
+    var courseHistory=[];
+    var courseMember=[];    
+    var userPhoneNumber;
+    var allDataReady=0;
+
+    notInCourse=[];
+    inCourse=[];
+    myHistory=[];      
+    
+    checkInputParam();
+    checkUserIdExist();
 
     function checkInputParam() {
       console.log(inputParam);
       try {
-        var displayName = inputParam[0].split("=");
-        var userId = inputParam[1].split("=");
-        var pictureUrl = inputParam[2].split("=");
+        displayName = inputParam[0].split("=");
+        userId = inputParam[1].split("=");
+        pictureUrl = inputParam[2].split("=");
       } catch (e) {
         alert("輸入參數錯誤");
         $("#joinForm").hide();
@@ -164,6 +164,8 @@
         inputError = true;
       }
 
+      console.log(displayName[1]);
+      
       if (!inputError) {
         console.log(displayName, userId, pictureUrl);
 
@@ -177,6 +179,36 @@
         alert("無效的 LINE ID!!");
       }
     }
+    
+    // ?displayName=小華&userId=U722be0c9c9d36e011c0e556bd2047819&pictureUrl=www.google.com
+    function checkUserIdExist() {
+      //Call API:00 檢查 userId 有沒有重複參加 */
+
+      paramToSend = "?API=00" + "&UserId=" + userId[1];
+
+      var request = new XMLHttpRequest();
+      if (useLocalAPIs) {
+        request.open('GET', 'http://localhost:5000' + paramToSend, true);
+      } else {
+        request.open('GET', 'https://api-linko-sports-center.herokuapp.com/'+paramToSend, true);
+      }
+
+      request.onload = function() {
+        //$.loading.end();
+        console.log(this.response);
+        if (this.response == "API:00 會員不存在") {
+          alert("為了讓您更容易使用團體課程，挑戰賽及使用優惠券，請填寫必要資料");
+        } else {
+          console.log("前往團課");
+          //readCourses();
+        }
+      }
+      // Send API request 
+      //$.loading.start('檢查是否已填寫必要資料');
+     
+      request.send();
+    }    
+        
   </script>
 </body>
 
