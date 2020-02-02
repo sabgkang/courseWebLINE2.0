@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" href="styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="styles/kendo.default.min.css" />
+    <link rel="stylesheet" href="styles/kendo.mobile.all.min.css" />
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/kendo.all.min.js"></script>
+    
+</head>
+<body>
+
+<div data-role="view" data-title="課程細節" id="actionsheet-view" data-use-native-scrolling="true" style="font-family:  'Noto Sans TC' ">
+    <!--<h3 id="actionResult">TEST</h3>-->
+    <ul data-role="listview" data-source="inbox" data-template="inboxItem" class="inboxList"></ul>
+
+
+</div>
+
+<!--
+<script type="script/x-kendo-template" id="inboxItem">
+    <a class="reply km-primary km-button-right"
+    style="color: white" // added by Paul Kang
+    data-role="button"
+    data-rel="actionsheet"
+    href="\\#inboxActions"
+    data-actionsheet-context="#:ID#">Reply</a>
+    <h6>#: From # <span class="disabled">#: Time#</span></h6>
+    <h4>#: Subject#</h4>
+    <p>#: Text#</p>
+</script>
+-->
+
+<script type="script/x-kendo-template" id="inboxItem">
+    <a class="reply km-primary km-button-right"
+    style="color: white" // added by Paul Kang
+    data-role="button"
+    onclick="test()" 
+    id = "myTest"
+    data-actionsheet-context="#:ID#">報名</a>
+    <h6>#: From # <span class="disabled">#: Time#</span></h6>
+    <h4>#: Subject#</h4>
+    <p>#: Text#</p>
+</script>
+
+<script>
+    var hrefString = window.location.href;
+    var inputParamString = hrefString.split("?");
+    var inputParam = inputParamString[1].split("&") 
+    console.log(inputParam);
+
+    var inbox = [
+        {
+            ID: 1,
+            From: "John Doe",
+            Subject: "Monday meeting",
+            Text: "Hi Tom, Since Monday I'll be out of office, I'm rescheduling the meeting for Tuesday.",
+            Time: "07:56"
+        },
+        /*
+        {
+            ID: 2,
+            From: "Sarah Connor",
+            Subject: "Regarding org chart changes",
+            Text: "Tom, I checked the new org chart last night and I have some reservations about it...",
+            Time: "08:22"
+        },
+        {
+            ID: 3,
+            From: "Jane Parker",
+            Subject: "Your Costume is ready",
+            Text: "Hi mr. Sawyer, I'm sorry for the delay, your Halloween costume is ready. The bears...",
+            Time: "10:14"
+        },
+        {
+            ID: 4,
+            From: "Joe Harper",
+            Subject: "I'm sorry, Tom",
+            Text: "Hi Tom, my aunt comes for a visit this Saturday, so I can't come back to St. Pete...",
+            Time: "10:14"
+        },
+        {
+            ID: 5,
+            From: "Becky Thatcher",
+            Subject: "Out tonight?",
+            Text: "Honey, wanna go out tonight to grab some chicken? My weekly vouchers for cooking...",
+            Time: "10:14"
+        }
+        */
+    ];
+    
+  function setEnabled($a, Enabled ){
+      $a.each(function(i, a){          
+          var en = a.onclick !== null;        
+          if(en == Enabled)return;
+          if(Enabled){
+              a.onclick = $(a).data('orgClick');            
+          }
+          else
+          {
+              $(a).data('orgClick',a.onclick);
+              a.onclick = null;
+          }
+      });
+  }
+  function test() {
+    console.log("aaa", inputParam);
+    $("#myTest").text("Done");
+    $("#myTest").css("background-color", "grey");    
+    setEnabled($('#myTest'), false); 
+  }
+  
+/*
+    function onOpen(e) {
+        this.element.find(".km-actionsheet-title").text(e.target.next().text());
+    }
+
+    function reply(e) {
+        $("#actionResult").html("Replying to message #" + e.context);
+    }
+
+    function replyAll(e) {
+        $("#actionResult").html("Replying to all in message #" + e.context);
+    }
+
+    function archive(e) {
+        $("#actionResult").html("Archiving message #" + e.context);
+    }
+*/    
+</script>
+
+
+<script>
+    //以下必須 remark 掉，不然會有問題
+    //var app = new kendo.mobile.Application(document.body, { skin: "nova" });
+</script>
+
+</body>
+</html>

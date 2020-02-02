@@ -1,0 +1,183 @@
+<!--https://demos.telerik.com/kendo-ui/content/shared/js/mobile-examples.js-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title></title>
+  <meta name="msapplication-tap-highlight" content="no" />
+
+  <!--  using Noto Sans TC is added by Paul Kang-->
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+
+  <link href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.common-nova.min.css" rel="stylesheet" />
+  <link href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.nova.min.css" rel="stylesheet" />
+  <link href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.mobile.nova.min.css" rel="stylesheet" />
+
+<!--  <link href="/kendo-ui/content/shared/styles/console.css" rel="stylesheet" />-->
+<!--  <link href="/kendo-ui/content/mobile/examples.css" rel="stylesheet" />-->
+  <link href="css/examples.css" rel="stylesheet" />
+  
+
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <script src="https://kendo.cdn.telerik.com/2020.1.114/js/kendo.all.min.js"></script>
+  <script src="https://kendo.cdn.telerik.com/2020.1.114/js/kendo.timezones.min.js"></script>
+
+</head>
+
+<body id="examples">
+  <!-- Google Tag Manager -->
+  <!-- remarked by Paul Kang
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-6X92" height="0" width="0" style="display: none; visibility: hidden"></iframe>
+    </noscript>
+    <script>(function(w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f); })(window, document, 'script', 'dataLayer', 'GTM-6X92');</script>
+  -->
+  <!-- End Google Tag Manager -->
+
+  <!-- 
+    若設  data-use-native-scrolling="true"，則 非 mobile mode 可以捲動，但 mobile mode 顯示有問題。
+    若沒設 data-use-native-scrolling="true"，則 非 mobile mode 無法捲動，但 mobile mode 正常可捲動。
+    -->
+
+  <style scoped>
+    .km-on-ios .km-header .km-navbar
+
+    /* for data-title="北大林口中心團課" */
+      {
+      background-color: coralbl;
+      /* deeppink; */
+      font-size: 18px;
+    }
+
+    .km-on-ios .km-header .km-widget,
+    .km-on-ios .km-header .km-view-title {
+      color: white;
+    }
+
+    .報名課程title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-left: 15px;
+
+    }
+
+    .課程名稱 {
+      font-size: 18px;
+      margin-left: 15px;
+
+    }
+  </style>
+
+  <div data-role="view" data-title="北大林口中心團課" style="font-family: 'Noto Sans TC'" id="index" data-layout="" data-show="nullCurrentExample" data-init="initSearch">
+    <header data-role="header">
+      <div data-role="navbar" id="normal" class="km-accent">
+        <!--                <a data-align="left" data-role="button" href="#about" data-rel="drawer" data-icon="drawer-icon"></a>-->
+        <span data-role="view-title"></span>
+        <span class="km-view-subtitle"></span>
+        <a data-align="right" data-role="button" data-click="showSearch" data-click-on="down" data-icon="search"></a>
+      </div>
+      <div data-role="navbar" id="search" class="navbar-hidden">
+        <div data-align="right" id="demos-search-container" data-align="right">
+          <input type="search" id="demos-search" />
+        </div>
+      </div>
+    </header>
+
+    <div style="height: 15px"></div>
+
+    <span class="報名課程title">報名課程</span>
+    <a class="reply km-primary km-button-right" href="#actionsheet/pullToRefresh.html" style="color: white; margin-right: 10px; " // added by Paul Kang data-role="button" onclick="">查看日曆</a>
+
+    <div style="height: 20px"></div>
+
+    <hr>
+
+    <div style="height: 15px"></div>
+    <span class="報名課程title">已報名課程</span>
+    <div style="height: 15px"></div>
+
+    <ul data-role="listview" data-source="navDataSource" data-pull-to-refresh="true" data-template="nav-template" data-header-template="header-template" class="main-menu">
+
+      <script type="text/x-kendo-template" id="header-template">
+        <span class="km-icon km-#: value #"></span> #: value #
+        </script>
+
+      <script type="text/x-kendo-template" id="nav-template">
+        <a href="#: url #" class="課程名稱">#: 課程名稱 # #= data.new ? '<span class="km-badge">NEW</span>' : '' #</a>
+        </script>
+
+    </ul>
+
+  </div>
+
+  <div data-id="examples" data-role="layout" data-show="showDemoLayout" data-hide="removeView">
+    <header data-role="header">
+      <div data-role="navbar" class="km-accent">
+        <a data-align="left" data-icon="arrow-w" href="#/" data-role="backbutton" data-transition="slide reverse"></a>
+        <span data-role="view-title"></span>
+        <!--        <a data-align="right" id="source-code-button" data-icon="source-code" data-click="goToSourceCode" data-role="button" title="Show this demo source code">Source Code</a>-->
+      </div>
+    </header>
+  </div>
+
+  <div id="source-code-view" data-transition="fade" data-title="Source code" data-show="showSourceCode" data-role="view" data-persist="true" data-stretch="true" data-use-native-scrolling="true">
+    <header data-role="header">
+      <div data-role="navbar">
+        <span data-role="view-title"></span>
+        <a data-align="right" data-click="openDojo" data-role="button">Edit</a>
+        <a data-align="right" href="#:back" data-role="button" data-icon="close"></a>
+      </div>
+    </header>
+
+    <div id="source-code-container"></div>
+  </div>
+
+<!--
+  <script src="/kendo-ui/content/shared/js/example-datasources.js"></script>
+  <script src="/kendo-ui/content/shared/js/mobile-examples.js"></script>
+  <script src="/kendo-ui/content/shared/js/console.js"></script>
+  <script src="/kendo-ui/content/shared/js/prettify.js"></script>
+-->
+<!--  <script src="js/example-datasources.js"></script>-->
+  <script src="js/mobile-examples.js"></script>
+  <script src="js/prettify.js"></script> 
+  
+  <script>
+    // added by Paul Kang
+    var paramToSend = "TEST";
+    var inputParamString = location.search;
+    var inputParam = inputParamString.split("&");
+    //console.log(inputParam);
+    //checkInputParam();
+
+    function checkInputParam() {
+      console.log(inputParam);
+      try {
+        var displayName = inputParam[0].split("=");
+        var userId = inputParam[1].split("=");
+        var pictureUrl = inputParam[2].split("=");
+      } catch (e) {
+        alert("輸入參數錯誤");
+        $("#joinForm").hide();
+        $("#errorMessage").css("display", "block");
+        inputError = true;
+      }
+
+      if (!inputError) {
+        console.log(displayName, userId, pictureUrl);
+
+        if (userId[0] == "userId") // && userId[1].length==33 ) {
+          console.log("valid UserId ", userId[1]);
+        //checkUserIdExist();
+        $("#name").text(decodeURI(displayName[1]));
+      } else {
+        $("#joinForm").hide();
+        $("#errorMessage").css("display", "block");
+        alert("無效的 LINE ID!!");
+      }
+    }
+  </script>
+</body>
+
+</html>
