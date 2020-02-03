@@ -25,7 +25,7 @@
   
   <link rel="stylesheet" href="css/loading.css" />
   <script src="js/loading.js"></script>  
-
+    
 </head>
 
 <body id="examples">
@@ -70,9 +70,15 @@
       margin-left: 15px;
 
     }
+    
+    #calendar,
+    #calendar .k-calendar-view,
+    #calendar .k-content {
+        width: 100%;
+    }    
   </style>
 
-  <div data-role="view" data-title="北大林口中心團課" style="font-family: 'Noto Sans TC'" id="index" data-layout="" data-show="nullCurrentExample" data-init="initSearch">
+  <div data-role="view" data-title="北大林口運動中心團課" style="font-family: 'Noto Sans TC'" id="index" data-layout="" data-show="nullCurrentExample" data-init="initSearch">
     <header data-role="header">
       <div data-role="navbar" id="normal" class="km-accent">
         <!--                <a data-align="left" data-role="button" href="#about" data-rel="drawer" data-icon="drawer-icon"></a>-->
@@ -107,7 +113,10 @@
         </script>
 
       <script type="text/x-kendo-template" id="nav-template">
-        <a href="#: url #" class="課程名稱">#: 課程名稱 # <br>#: 老師姓名 # <span style="float:right; margin-right: 20px" >#: 課程時間 #</span></a>
+        <a href="#: url #" class="課程名稱">#: 課程名稱 # <br>
+          <span style="font-size:16px; color: gray">#: 老師姓名 # </span>
+          <span style="font-size:16px; color: gray; float:right; margin-right:20px" >#: 課程時間 #</span>
+        </a>
       </script>
 
     </ul>

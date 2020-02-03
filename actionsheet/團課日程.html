@@ -9,19 +9,42 @@
 
   <script src="https://kendo.cdn.telerik.com/2020.1.114/js/jquery.min.js"></script>
   <script src="https://kendo.cdn.telerik.com/2020.1.114/js/kendo.all.min.js"></script>
-
+  
 </head>
 <body>
   <div data-role="view" data-init="initData" data-title="團課日程" style="text-align: center;font-family: 'Noto Sans TC'">
-     <div id="團課日程Div">
-        <div id="calendar"></div>
+    <div id="團課日程Div">
+      <div id="calendar"></div>
 
-        <div>
-          <hr>
-          <ul id="courseTable"></ul>        
-        </div> 
-     </div>
-     <div id="報名表格" style="display: none" > 報名表格 </div>
+      <div>
+        <ul id="courseTable"></ul>        
+      </div> 
+    </div>
+     
+    <div id="報名表格" style="display: none; text-align: left; margin-left: 20px" > 
+    <h1>課程名稱: #: 課程名稱 #</h1>
+    <h1>老師姓名: #: 老師姓名 #</h1>
+    <h1>助教姓名: #: 助教姓名 #</h1>
+    <h1>上課時間: #: 上課時間 #</h1>    
+    <h1>燃燒熱量: #: 燃燒熱量 #</h1>  
+    <h1>課程人數: #: 課程人數 #</h1> 
+    <h1>課程費用: #: 課程費用 #</h1>    
+    <h1>其他說明: #: 其他說明 #</h1>
+    <hr style="margin-right: 20px">
+    <h1>報名人數: #: 報名人數 #</h1>
+    <h1>繳費人數: #: 繳費人數 #</h1>
+     
+    <a class="km-primary km-button-left" data-role="button"
+    style="color: white; margin: 20px 20px 20px 0px; font-size: 20px" 
+    onclick="確定報名()" id = "確定報名按鈕"
+    >確定報名</a>
+         
+    <a class="km-secondary" data-role="button"
+    style="color: gray; margin:20px; font-size: 20px" 
+    onclick="取消報名()" id = "取消報名按鈕"
+    >取消報名</a>         
+          
+    </div>
   </div>
     
   <script type="text/x-kendo-template" id="course-template">
@@ -29,23 +52,26 @@
       style="color: white" 
       data-role="button"
       onclick="報名課程('#: 課程編號 #')" 
-      id = "報名按鈕"
+      id = "報名按鈕#: 課程編號 #"
       >報名</a>
       <div style="text-align:left">#: 課程編號 # : #: 課程名稱 # <br>
-        <span>#: 老師姓名 #</span> <span style="float:right; margin-right: 10px" >#: 上課時間 #</span>
+        <span>#: 老師姓名 # 老師</span> <span style="float:right; margin-right: 10px" >#: 上課時間 #</span>
       </div>
   </script>
 
   <script>
+    
     function 報名課程(courseId){
-      //使用 dialog, 參考 https://demos.telerik.com/kendo-ui/dialog/events
+      ///?API=20&UserName=小華&CourseId=U0002&UserId=U722be0c9c9d36e011c0e556bd2047819&PhoneNumber=09XXXXX333
 
-      console.log("報名課程", courseId);
+      console.log("報名課程", courseId, userId[1],userPhoneNumber);
+      $("#團課日程Div").hide();
+      $("#報名表格").show()
 
     }  
 
     var dataSource;
-    data = [];
+    //data = [];
 
       function initDataSource(){
           dataSource = new kendo.data.DataSource({    
@@ -101,13 +127,43 @@
               "url": "actionsheet/course報名.html?courseId=" + "U0003",                  
               "ProductName": "一起來運動",
               //"UnitPrice": 100
-            });          
+            });   
+            
+            courseMember.forEach(function(item, index, array){
+              if (course[0]==item[0]){
+                
+                for (var i=1; i< item.length; i++) {
+                  if (item[i][3]=userId[1]) {
+                    $("#報名按鈕"+course[0]).text("已報名");  
+                    $("#報名按鈕"+course[0]).css("background-color", "grey");                       
+                    $("#報名按鈕"+course[0]).css("border-style", "none");  
+                    setEnabled($("#報名按鈕"+course[0]), false);
+                  }
+                }
+              }            
+            });
           }
-
+                
         });       
+        
+        
       }
 
 
+      function setEnabled($a, Enabled ){
+        $a.each(function(i, a){          
+            var en = a.onclick !== null;        
+            if(en == Enabled)return;
+            if(Enabled){
+                a.onclick = $(a).data('orgClick');            
+            }
+            else
+            {
+                $(a).data('orgClick',a.onclick);
+                a.onclick = null;
+            }
+        });
+      }
 
       function onNavigate() {
           console.log("Navigate");
