@@ -77,7 +77,7 @@ function getCourseData(data) {
             var courseTitle = {
               "課程名稱": courseData[ind][0] + ": " +
                          courseData[ind][1],
-              "老師姓名": courseData[ind][2],
+              "老師姓名": courseData[ind][2] + " 老師",
               "課程時間": courseData[ind][3], 
               "url": "actionsheet/courseDetail.html?courseId=" + courseData[ind][0],
               "section": "A"             
@@ -130,8 +130,9 @@ function nullCurrentExample(e) {
 }
 
 function removeView(e) {
-  console.log("removeView");  
+  //console.log("removeView", e);  
   if (!e.view.element.data("persist")) {
+    console.log(e);
     e.view.purge();
   }
 
@@ -219,7 +220,7 @@ function searchExamplesFor(value){
         //console.log("aaa", allDataReady);
         if (allDataReady==4) {
           clearInterval(checkDataReady);
-          console.log("Data is ready");
+          console.log("Data is ready", courseData);
           //alert("Data is ready");
           $.loading.end();
           notInCourse=[];

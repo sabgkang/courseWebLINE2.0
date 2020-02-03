@@ -1,168 +1,140 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <style>html { font-size: 14px; font-family: Arial, Helvetica, sans-serif; }</style>
-    <title></title>
-    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.common.min.css" />
-    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.default.min.css" />
-    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.mobile.all.min.css" />
+  <style>html { font-size: 14px; font-family: Arial, Helvetica, sans-serif; }</style>
+  <title></title>
+  <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.common.min.css" />
+  <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.default.min.css" />
+  <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.mobile.all.min.css" />
 
-    <script src="https://kendo.cdn.telerik.com/2020.1.114/js/jquery.min.js"></script>
-    <script src="https://kendo.cdn.telerik.com/2020.1.114/js/kendo.all.min.js"></script>
-    
+  <script src="https://kendo.cdn.telerik.com/2020.1.114/js/jquery.min.js"></script>
+  <script src="https://kendo.cdn.telerik.com/2020.1.114/js/kendo.all.min.js"></script>
 
 </head>
 <body>
-<div data-role="view" data-init="mobileListViewPullToRefresh" data-title="團課日程" style="text-align: center;font-family: 'Noto Sans TC'">
-    <div id="calendar"></div>
-    <hr>
-    <ul id="pull-to-refresh-listview"></ul>    
-</div>
+  <div data-role="view" data-init="initData" data-title="團課日程" style="text-align: center;font-family: 'Noto Sans TC'">
+     <div id="團課日程Div">
+        <div id="calendar"></div>
 
-
-
-<!--
-<script type="text/x-kendo-tmpl" id="pull-to-refresh-template">
-    <div class="product-item">        
-        <h3>#:ProductName#</h3>
-        <p>#:kendo.toString(UnitPrice, "c")#</p>
-    </div>
-</script>
--->
-
-<script type="text/x-kendo-template" id="pull-to-refresh-template">
-  <span style="float: left;" href="#: url #">#: 課程名稱 #</span>
-  
-    <a class="reply km-primary km-button-right"
-    style="color: white; " // added by Paul Kang
-    data-role="button"
-    onclick="test('#: url #')" 
-    >報名</a>  
-</script>
-      
-
-<script>
-function test(aa){
-  console.log("test", aa);
-}  
-  
-    var dataSource;
-    data = [
-//                {
-//                  "課程名稱": "一起來運動",
-//                  "url": "actionsheet/courseDetail.html?courseId=U0001",                  
-//                  "ProductName": "一起來運動",
-//                  "UnitPrice": 100
-//                },
-//                {
-//                  "課程名稱": "運動運動",
-//                  "url": "actionsheet/pullToRefresh.html?courseId=U0002",    
-//                  "ProductName": "運動運動",
-//                  "UnitPrice": 200,       
-//                },
-            ];
-  
-    function initDataSource(){
-        dataSource = new kendo.data.DataSource({    
-            data: [],
-            schema: {
-                total: function () { 
-                  return 77; }
-            },            
-            serverPaging: true,
-            pageSize: 40
-        });      
-    }
-  
-    function emptyDataSource(){
-      for (var i=0; i< dataSource.lastRange().end; i++){
-        var toDel = dataSource.at(0);
-        dataSource.remove(toDel);
-      }
-    }
-  
-    function onChange() {
-      console.log("Change :: " + kendo.toString(this.value(), 'd'));
-      emptyDataSource();
-      dataSource.add({       
-                  "課程名稱": "一起來運動 at " + kendo.toString(this.value(), 'd'),
-                  "url": kendo.toString(this.value(), 'd'),                  
-                  "ProductName": "一起來運動",
-                  "UnitPrice": 100
-                })
-    }
-
-    function onNavigate() {
-        console.log("Navigate");
-    }
+        <div>
+          <hr>
+          <ul id="courseTable"></ul>        
+        </div> 
+     </div>
+     <div id="報名表格" style="display: none" > 報名表格 </div>
+  </div>
     
-    function mobileListViewPullToRefresh(e) {
-      console.log("init");
-//        dataSource = new kendo.data.DataSource({
-//            transport: {
-//                read: {
-//                    url: "https://demos.telerik.com/kendo-ui/service/Products/Read",
-//                    dataType: "jsonp"
-//                }
-//            },
-          
-//            data: data,
-//            schema: {
-//                total: function () { 
-//                  console.log("bbb"); 
-//                  data1[0].ProductName="aaa";
-//                  data1[1].ProductName="bbb";
-//                  return 77; }
-//            },            
-//            serverPaging: true,
-//            pageSize: 40
-//        });
-      
-      initDataSource();
+  <script type="text/x-kendo-template" id="course-template">
+      <a class="reply km-primary km-button-right"
+      style="color: white" 
+      data-role="button"
+      onclick="報名課程('#: 課程編號 #')" 
+      id = "報名按鈕"
+      >報名</a>
+      <div style="text-align:left">#: 課程編號 # : #: 課程名稱 # <br>
+        <span>#: 老師姓名 #</span> <span style="float:right; margin-right: 10px" >#: 上課時間 #</span>
+      </div>
+  </script>
 
-        $("#pull-to-refresh-listview").kendoMobileListView({
+  <script>
+    function 報名課程(courseId){
+      //使用 dialog, 參考 https://demos.telerik.com/kendo-ui/dialog/events
+
+      console.log("報名課程", courseId);
+
+    }  
+
+    var dataSource;
+    data = [];
+
+      function initDataSource(){
+          dataSource = new kendo.data.DataSource({    
+              data: [],
+              schema: {
+                  total: function () { 
+                    return 77; }
+              },            
+              serverPaging: true,
+              pageSize: 40
+          });      
+      }
+
+      function emptyDataSource(){
+        var numToDel = dataSource.lastRange().end;
+        for (var i=0; i< numToDel; i++){
+          var toDel = dataSource.at(0);
+          dataSource.remove(toDel);
+        }
+      }
+
+      function convertDate(dateStr){
+        var dateArr = dateStr.split("/");
+  //      if (dateArr[0].length ==1) dateArr[0]= "0"+dateArr[0];
+  //      if (dateArr[1].length ==1) dateArr[1]= "0"+dateArr[1];      
+        return dateArr[2]+"-"+dateArr[0]+"-"+dateArr[1];
+      }
+
+      function onChange() {
+        var selectedDateStr = kendo.toString(this.value(), 'd');
+        var selectedDate = convertDate(selectedDateStr);
+        console.log("Change :" + selectedDate);
+        emptyDataSource();
+
+        courseData.forEach(function(course, index, array){
+          var courseDateArr = course[3].split(" ");
+          var courseDate = courseDateArr[0];
+
+          if (courseDate == selectedDate) {
+            //console.log("matched ", course);
+            dataSource.add({  
+              "課程編號": course[0],
+              "課程名稱": course[1],
+              "老師姓名": course[2],
+              "助教姓名": course[9],          
+              "上課時間": course[3],  
+              "燃燒熱量": course[4],
+              "課程人數": course[6],
+              "課程費用": course[5],
+              "其他說明": course[10],
+              "報名人數": course[7],
+              "繳費人數": course[8],        
+              "url": "actionsheet/course報名.html?courseId=" + "U0003",                  
+              "ProductName": "一起來運動",
+              //"UnitPrice": 100
+            });          
+          }
+
+        });       
+      }
+
+
+
+      function onNavigate() {
+          console.log("Navigate");
+      }
+
+      function initData(e) {
+        console.log("init");
+
+        initDataSource();
+
+        $("#courseTable").kendoMobileListView({
             dataSource: dataSource,
-            pullToRefresh: true,            
-            template: $("#pull-to-refresh-template").text()            
+            pullToRefresh: false,            
+            template: $("#course-template").text()            
         });
-      
+
         $("#calendar").kendoCalendar({
             change: onChange,
             navigate: onNavigate
         });
-    }
-    
- 
-</script>
+      }
 
-<style>
-    .product-item {
-        font-size: 1.2;
-    }
-    .product-item h3 {
-        float: left;
-        margin: 0;
-        padding: 0;
-        height: 1.3em;
-        overflow: hidden;
-    }
-    .product-item p {
-        float: right;
-        margin: 0;
-        padding: 0;
-    }
-    .pullImage {
-        width: 64px;
-        height: 64px;
-        border-radius: 3px;
-        float: left;
-        margin-right: 10px;
-    }
-</style>
+  </script>
 
 
-<script>
-    //var app = new kendo.mobile.Application(document.body, { skin: "nova" });
-</script>
+  <script>
+      //var app = new kendo.mobile.Application(document.body, { skin: "nova" });
+  </script>
 </body>
 </html>

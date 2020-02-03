@@ -40,20 +40,16 @@
 </script>
 
 <script>
-  var hrefString = window.location.href;
-  var inputParamString = hrefString.split("?");
-  var inputParam = inputParamString[2].split("&")
-  var courseId = inputParam[0].split("=")[1];
-
-  //var courseNum = parseInt(courseId.substring(1,5));
-  console.log(courseId);
-  var idNum = 0;
-  var courseDetail=[];  
+    var hrefString = window.location.href;
+    var inputParamString = hrefString.split("?");
+    var inputParam = inputParamString[2].split("&")
+    var courseId = inputParam[0].split("=")[1];
+    
+    //var courseNum = parseInt(courseId.substring(1,5));
+    //console.log(hrefString, courseId);
   
-  updateDate();
-  
-
-  function updateDate(){
+    var courseDetail=[];
+    var idNum = 0;
     courseData.forEach(function(course, ind, arr){
       if (course[0]==courseId) {
         idNum++;
@@ -75,7 +71,6 @@
         courseDetail.push(courseDetailItem);
       }
     });
-  }
 
 
     
@@ -127,7 +122,7 @@
 
 <script>
   //以下必須 remark 掉，不然會有問題
-  //var app = new kendo.mobile.Application(document.body, { skin: "nova" });
+//var app = new kendo.mobile.Application(document.body, { skin: "nova" });
 </script>
 
 </body>
