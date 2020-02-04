@@ -120,7 +120,7 @@
       </script>
 
     </ul>
-    <h1 id="deleteMe">Location: </h1>
+    <h2 id="deleteMe"></h2>
 
   </div>
 
@@ -157,8 +157,8 @@
     // test geolocation
     navigator.geolocation.getCurrentPosition(function(position) {
       console.log(position.coords.latitude, position.coords.longitude);
-      var lat = Math.floor(position.coords.latitude * 1000)/1000;
-      var lon = Math.floor(position.coords.longitude * 1000)/1000;      
+      var lat = Math.floor(position.coords.latitude * 10000)/10000;
+      var lon = Math.floor(position.coords.longitude * 10000)/10000;      
       $("#deleteMe").text("所在位置: lat-"+String(lat)+", lon-"+String(lon));
     });
     // end of test

@@ -232,8 +232,9 @@ function searchExamplesFor(value){
           courseMember.forEach(function(course, index, array){  
             attended = false;        
             for (var i=1; i<course.length;i++) {
-              //console.log(course[i][0]);
-              if (course[i][4] == userPhoneNumber) {
+              //console.log(course[i][3], userId[1]);
+//              if (course[i][4] == userPhoneNumber) {
+              if (course[i][3] == userId[1]) {              
                 //console.log(course[0],userName, "已參加")
                 attended = true;
               }
@@ -279,7 +280,6 @@ function searchExamplesFor(value){
         var responseMsg = this.response;
         
         //responseMsg="API:10 courseData 讀取失敗"; //故意測試錯誤
-        console.log(responseMsg);
         if (responseMsg != "API:10 courseData 讀取失敗") {
           courseData = JSON.parse(this.response);
           //console.log(courseData);

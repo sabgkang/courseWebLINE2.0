@@ -133,7 +133,8 @@
               if (course[0]==item[0]){
                 
                 for (var i=1; i< item.length; i++) {
-                  if (item[i][3]=userId[1]) {
+                  //console.log(item[i][3],userId[1]);
+                  if (item[i][3]==userId[1]) {
                     $("#報名按鈕"+course[0]).text("已報名");  
                     $("#報名按鈕"+course[0]).css("background-color", "grey");                       
                     $("#報名按鈕"+course[0]).css("border-style", "none");  

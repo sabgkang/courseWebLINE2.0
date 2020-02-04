@@ -1,134 +1,173 @@
 
 <!DOCTYPE html>
 <html>
-<head>
-    <title></title>
-    <link rel="stylesheet" href="styles/kendo.common.min.css" />
-    <link rel="stylesheet" href="styles/kendo.default.min.css" />
-    <link rel="stylesheet" href="styles/kendo.mobile.all.min.css" />
+  <head>
+      <title></title>
+      <link rel="stylesheet" href="styles/kendo.common.min.css" />
+      <link rel="stylesheet" href="styles/kendo.default.min.css" />
+      <link rel="stylesheet" href="styles/kendo.mobile.all.min.css" />
 
-    <script src="js/jquery.min.js"></script>
-    <script src="js/kendo.all.min.js"></script>
-    
-</head>
-<body>
-
-<div data-role="view" data-title="課程細節" id="actionsheet-view" data-use-native-scrolling="true" style="font-family:  'Noto Sans TC' " data-show="dataAlreadyShown">
-    <!--<h3 id="actionResult">TEST</h3>-->
-    <ul data-role="listview" data-source="courseDetail" data-template="courseItemTemplate" class="courseList"></ul>
-</div>
-
-<script type="script/x-kendo-template" id="courseItemTemplate">
-    <a class="reply km-primary km-button-right"
-    style="color: white" 
-    data-role="button"
-    onclick="繳費(#:ID#)" 
-    id = "繳費按鈕#:ID#"
-    data-actionsheet-context="#:ID#">未繳費</a>
-    <h4>課程編號: #: 課程編號 #</h4>
-    <h4>課程名稱: #: 課程名稱 #</h4>
-    <h4>老師姓名: #: 老師姓名 #</h4>
-    <h4>助教姓名: #: 助教姓名 #</h4>
-    <h4>上課時間: #: 上課時間 #</h4>    
-    <h4>燃燒熱量: #: 燃燒熱量 #</h4>  
-    <h4>課程人數: #: 課程人數 #</h4> 
-    <h4>課程費用: #: 課程費用 #</h4>    
-    <h4>其他說明: #: 其他說明 #</h4>
-    <hr>
-    <h4>報名人數: #: 報名人數 #</h4>
-    <h4>繳費人數: #: 繳費人數 #</h4> 
-</script>
-
-<script>
-  var hrefString = window.location.href;
-  var inputParamString = hrefString.split("?");
-  var inputParam = inputParamString[2].split("&")
-  var courseId = inputParam[0].split("=")[1];
-
-  //var courseNum = parseInt(courseId.substring(1,5));
-  console.log(courseId);
-  var idNum = 0;
-  var courseDetail=[];  
+      <script src="js/jquery.min.js"></script>
+      <script src="js/kendo.all.min.js"></script>    
+  </head>
   
-  updateDate();
-  
+  <body>
+    <div data-role="view" data-title="課程細節" id="actionsheet-view" data-use-native-scrolling="true" style="font-family:  'Noto Sans TC' " data-show="dataAlreadyShown">
+        <!--<h3 id="actionResult">TEST</h3>-->
+        <ul data-role="listview" data-source="courseDetail" data-template="courseItemTemplate" class="courseList"></ul>
+    </div>
 
-  function updateDate(){
-    courseData.forEach(function(course, ind, arr){
-      if (course[0]==courseId) {
-        idNum++;
-        //console.log(course, ind);
-        var courseDetailItem = {
-          "ID": idNum,
-          "課程編號": course[0],
-          "課程名稱": course[1],
-          "老師姓名": course[2],
-          "助教姓名": course[9],          
-          "上課時間": course[3],  
-          "燃燒熱量": course[4],
-          "課程人數": course[6],
-          "課程費用": course[5],
-          "其他說明": course[10],
-          "報名人數": course[7],
-          "繳費人數": course[8],          
-        };
-        courseDetail.push(courseDetailItem);
+
+    <script type="script/x-kendo-template" id="courseItemTemplate">
+        <a class="reply km-primary km-button-right"
+        style="color: white" 
+        data-role="button"
+        onclick="繳費(#:ID#)" 
+        id = "繳費按鈕#:ID#"
+        data-actionsheet-context="#:ID#">未繳費</a>
+
+        <a class="reply km-primary km-button-right"
+        style="color: white" 
+        data-role="button"
+        onclick="簽到(#:ID#)" 
+        id = "簽到按鈕#:ID#"
+        data-actionsheet-context="#:ID#">簽到</a>
+
+        <h4>課程編號: #: 課程編號 #</h4>
+        <h4>課程名稱: #: 課程名稱 #</h4>
+        <h4>老師姓名: #: 老師姓名 #</h4>
+        <h4>助教姓名: #: 助教姓名 #</h4>
+        <h4>上課時間: #: 上課時間 #</h4>    
+        <h4>燃燒熱量: #: 燃燒熱量 #</h4>  
+        <h4>課程人數: #: 課程人數 #</h4> 
+        <h4>課程費用: #: 課程費用 #</h4>    
+        <h4>其他說明: #: 其他說明 #</h4>
+        <hr>
+        <h4>報名人數: #: 報名人數 #</h4>
+        <h4>繳費人數: #: 繳費人數 #</h4> 
+    </script>
+
+    <script>
+      var 場所位置 ={
+        經度:  24.7118, // 中光電竹南廠
+        緯度: 120.9162
       }
-    });
-  }
 
+      var hrefString = window.location.href;
+      var inputParamString = hrefString.split("?");
+      var inputParam = inputParamString[2].split("&")
+      var courseId = inputParam[0].split("=")[1];
 
-    
-  function setEnabled($a, Enabled ){
-      $a.each(function(i, a){          
-          var en = a.onclick !== null;        
-          if(en == Enabled)return;
-          if(Enabled){
-              a.onclick = $(a).data('orgClick');            
+      //var courseNum = parseInt(courseId.substring(1,5));
+      console.log(courseId);
+      var idNum = 0;
+      var courseDetail=[];  
+
+      updateCourseDetail();
+
+      function updateCourseDetail(){
+        courseData.forEach(function(course, ind, arr){
+          if (course[0]==courseId) {
+            idNum++;
+            //console.log(course, ind);
+            var courseDetailItem = {
+              "ID": idNum,
+              "課程編號": course[0],
+              "課程名稱": course[1],
+              "老師姓名": course[2],
+              "助教姓名": course[9],          
+              "上課時間": course[3],  
+              "燃燒熱量": course[4],
+              "課程人數": course[6],
+              "課程費用": course[5],
+              "其他說明": course[10],
+              "報名人數": course[7],
+              "繳費人數": course[8],          
+            };
+            courseDetail.push(courseDetailItem);
           }
-          else
-          {
-              $(a).data('orgClick',a.onclick);
-              a.onclick = null;
+        });
+      }
+
+      function setEnabled($a, Enabled ){
+          $a.each(function(i, a){          
+              var en = a.onclick !== null;        
+              if(en == Enabled)return;
+              if(Enabled){
+                  a.onclick = $(a).data('orgClick');            
+              }
+              else
+              {
+                  $(a).data('orgClick',a.onclick);
+                  a.onclick = null;
+              }
+          });
+      }
+      function 繳費(id) {
+        alert("請到櫃檯繳費");
+      }
+
+      function dataAlreadyShown(){
+        console.log("data-view 已顯示"); 
+
+        // 查詢是否已繳費
+        $("#繳費按鈕"+idNum.toString()).text("請繳費");     
+        //$("#繳費按鈕"+idNum.toString()).css("background-color", "grey");  
+        //$("#繳費按鈕"+idNum.toString()).css("border-style", "none");              
+        //setEnabled($('#繳費按鈕'+idNum.toString()), false);    
+
+        courseMember.forEach(function(course, index, array){
+          if (course[0]==courseId) {
+            for (var i=1; i< course.length;i++){
+              console.log(course[i][3]);
+              if (course[i][3]== userId[1] && course[i][1]=="已繳費") {
+                console.log(course[i][1]);
+                $("#繳費按鈕"+idNum.toString()).text("已繳費");   
+                $("#繳費按鈕"+idNum.toString()).css("background-color", "grey");  
+                $("#繳費按鈕"+idNum.toString()).css("border-style", "none");  
+                setEnabled($('#繳費按鈕'+idNum.toString()), false);              
+              } 
+            }
           }
+        });
+
+    //This function takes in latitude and longitude of two location and returns the distance between them as the crow flies (in km)
+      function calcDistance(lat1, lon1, lat2, lon2) 
+      {
+        var R = 6371000; // meter
+        var dLat = toRad(lat2-lat1);
+        var dLon = toRad(lon2-lon1);
+        var lat1 = toRad(lat1);
+        var lat2 = toRad(lat2);
+
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        var d = R * c;
+        return d;
+      }
+
+      // Converts numeric degrees to radians
+      function toRad(Value) 
+      {
+          return Value * Math.PI / 180;
+      }
+              
+      // 檢查位置及距離
+      navigator.geolocation.getCurrentPosition(function(position) {
+        console.log(position.coords.latitude, position.coords.longitude); 
+        console.log(calcDistance(position.coords.latitude, position.coords.longitude, 場所位置.經度, 場所位置.緯度));
       });
-  }
-  function 繳費(id) {
-    alert("請到櫃檯繳費");
-  }
-  
-  function dataAlreadyShown(){
-    console.log("data-view 已顯示"); 
-    
-    // 查詢是否已繳費
-    $("#繳費按鈕"+idNum.toString()).text("請繳費");     
-    //$("#繳費按鈕"+idNum.toString()).css("background-color", "grey");  
-    //$("#繳費按鈕"+idNum.toString()).css("border-style", "none");              
-    //setEnabled($('#繳費按鈕'+idNum.toString()), false);    
-    
-    courseMember.forEach(function(course, index, array){
-      if (course[0]==courseId) {
-        for (var i=1; i< course.length;i++){
-          console.log(course[i][3]);
-          if (course[i][3]== userId[1] && course[i][1]=="已繳費") {
-            console.log(course[i][1]);
-            $("#繳費按鈕"+idNum.toString()).text("已繳費");   
-            $("#繳費按鈕"+idNum.toString()).css("background-color", "grey");  
-            $("#繳費按鈕"+idNum.toString()).css("border-style", "none");  
-            setEnabled($('#繳費按鈕'+idNum.toString()), false);              
-          } 
-        }
+
       }
-    });    
-  }
-  
-</script>
+
+    </script>
 
 
-<script>
-  //以下必須 remark 掉，不然會有問題
-  //var app = new kendo.mobile.Application(document.body, { skin: "nova" });
-</script>
+    <script>
+      //以下必須 remark 掉，不然會有問題
+      //var app = new kendo.mobile.Application(document.body, { skin: "nova" });
+    </script>
 
-</body>
+  </body>
 </html>
