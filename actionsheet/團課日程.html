@@ -22,25 +22,26 @@
     </div>
      
     <div id="報名表格" style="display: none; text-align: left; margin-left: 20px" > 
-    <h1>課程名稱: #: 課程名稱 #</h1>
-    <h1>老師姓名: #: 老師姓名 #</h1>
-    <h1>助教姓名: #: 助教姓名 #</h1>
-    <h1>上課時間: #: 上課時間 #</h1>    
-    <h1>燃燒熱量: #: 燃燒熱量 #</h1>  
-    <h1>課程人數: #: 課程人數 #</h1> 
-    <h1>課程費用: #: 課程費用 #</h1>    
-    <h1>其他說明: #: 其他說明 #</h1>
+    <h2 id="報名表格課程編號">課程編號: #: 課程編號 #</h2>
+    <h2 id="報名表格課程名稱">課程名稱: #: 課程名稱 #</h2>
+    <h2 id="報名表格老師姓名">老師姓名: #: 老師姓名 #</h2>
+    <h2 id="報名表格助教姓名">助教姓名: #: 助教姓名 #</h2>
+    <h2 id="報名表格上課時間">上課時間: #: 上課時間 #</h2>    
+    <h2 id="報名表格燃燒熱量">燃燒熱量: #: 燃燒熱量 #</h2>  
+    <h2 id="報名表格課程人數">課程人數: #: 課程人數 #</h2> 
+    <h2 id="報名表格課程費用">課程費用: #: 課程費用 #</h2>    
+    <h2 id="報名表格其他說明">其他說明: #: 其他說明 #</h2>
     <hr style="margin-right: 20px">
-    <h1>報名人數: #: 報名人數 #</h1>
-    <h1>繳費人數: #: 繳費人數 #</h1>
+    <h2 id="報名表格報名人數">報名人數: #: 報名人數 #</h2>
+    <h2 id="報名表格繳費人數">繳費人數: #: 繳費人數 #</h2>
      
     <a class="km-primary km-button-left" data-role="button"
-    style="color: white; margin: 20px 20px 20px 0px; font-size: 20px" 
+    style="color: white; margin: 20px 20px 20px 0px; font-size: 16px" 
     onclick="確定報名()" id = "確定報名按鈕"
     >確定報名</a>
          
     <a class="km-secondary" data-role="button"
-    style="color: gray; margin:20px; font-size: 20px" 
+    style="color: gray; margin:20px; font-size: 16px" 
     onclick="取消報名()" id = "取消報名按鈕"
     >取消報名</a>         
           
@@ -60,132 +61,154 @@
   </script>
 
   <script>
+    var dataSource;
+    //data = [];
+    
+    function initData(e) {
+      console.log("init");
+
+      //initDataSource();
+      dataSource = new kendo.data.DataSource({    
+          data: [],
+          schema: {
+              total: function () { 
+                return 77; }
+          },            
+          serverPaging: true,
+          pageSize: 40
+      });      
+
+      $("#courseTable").kendoMobileListView({
+          dataSource: dataSource,
+          pullToRefresh: false,            
+          template: $("#course-template").text()            
+      });
+
+      $("#calendar").kendoCalendar({
+          change: onChange,
+          navigate: onNavigate
+      });
+    }    
+    
     
     function 報名課程(courseId){
       ///?API=20&UserName=小華&CourseId=U0002&UserId=U722be0c9c9d36e011c0e556bd2047819&PhoneNumber=09XXXXX333
 
       console.log("報名課程", courseId, userId[1],userPhoneNumber);
+      
+      courseData.forEach(function(course, index, array){
+        if (course[0] == courseId) {
+          console.log(courseId, "is found");
+          $("#報名表格課程編號").text("課程編號: "+course[0]);        
+          $("#報名表格課程名稱").text("課程名稱: "+course[1]);  
+          $("#報名表格老師姓名").text("老師姓名: "+course[2]);        
+          $("#報名表格助教姓名").text("助教姓名: "+course[9]);    
+          $("#報名表格上課時間").text("上課時間: "+course[3]);        
+          $("#報名表格燃燒熱量").text("燃燒熱量: "+course[4]);  
+          $("#報名表格課程人數").text("課程人數: "+course[6]);        
+          $("#報名表格課程費用").text("課程費用: "+course[5]);  
+          $("#報名表格其他說明").text("其他說明: "+course[10]);          
+          $("#報名表格報名人數").text("報名人數: "+course[7]);  
+          $("#報名表格繳費人數").text("繳費人數: "+course[8]);          
+        }
+      });
+      
       $("#團課日程Div").hide();
       $("#報名表格").show()
 
     }  
 
-    var dataSource;
-    //data = [];
-
-      function initDataSource(){
-          dataSource = new kendo.data.DataSource({    
-              data: [],
-              schema: {
-                  total: function () { 
-                    return 77; }
-              },            
-              serverPaging: true,
-              pageSize: 40
-          });      
+    function 取消報名(){
+      $("#團課日程Div").show();
+      $("#報名表格").hide()
+    }
+    
+    function emptyDataSource(){
+      var numToDel = dataSource.lastRange().end;
+      for (var i=0; i< numToDel; i++){
+        var toDel = dataSource.at(0);
+        dataSource.remove(toDel);
       }
+    }
 
-      function emptyDataSource(){
-        var numToDel = dataSource.lastRange().end;
-        for (var i=0; i< numToDel; i++){
-          var toDel = dataSource.at(0);
-          dataSource.remove(toDel);
-        }
-      }
+     // MM/DD/YYYY ==> YYYY-MM-DD
+    function convertDate(dateStr){ 
+      var dateArr = dateStr.split("/");
+      // Kendo UI Calendar 的日期是類似 2/9/2020，月和日不會補0
+      //if (dateArr[0].length ==1) dateArr[0]= "0"+dateArr[0];
+      //if (dateArr[1].length ==1) dateArr[1]= "0"+dateArr[1];
+      return dateArr[2]+"-"+dateArr[0]+"-"+dateArr[1];
+    }
 
-      function convertDate(dateStr){
-        var dateArr = dateStr.split("/");
-  //      if (dateArr[0].length ==1) dateArr[0]= "0"+dateArr[0];
-  //      if (dateArr[1].length ==1) dateArr[1]= "0"+dateArr[1];      
-        return dateArr[2]+"-"+dateArr[0]+"-"+dateArr[1];
-      }
+    function onChange() {
+      var selectedDateStr = kendo.toString(this.value(), 'd');
+      var selectedDate = convertDate(selectedDateStr);
+      console.log("Change :" + selectedDate);
+      emptyDataSource();
 
-      function onChange() {
-        var selectedDateStr = kendo.toString(this.value(), 'd');
-        var selectedDate = convertDate(selectedDateStr);
-        console.log("Change :" + selectedDate);
-        emptyDataSource();
+      courseData.forEach(function(course, index, array){
+        var courseDateArr = course[3].split(" ");
+        var courseDate = courseDateArr[0];
 
-        courseData.forEach(function(course, index, array){
-          var courseDateArr = course[3].split(" ");
-          var courseDate = courseDateArr[0];
+        if (courseDate == selectedDate) {
+          //console.log("matched ", course);
+          dataSource.add({  
+            "課程編號": course[0],
+            "課程名稱": course[1],
+            "老師姓名": course[2],
+            "助教姓名": course[9],          
+            "上課時間": course[3],  
+            "燃燒熱量": course[4],
+            "課程人數": course[6],
+            "課程費用": course[5],
+            "其他說明": course[10],
+            "報名人數": course[7],
+            "繳費人數": course[8],        
+            "url": "actionsheet/course報名.html?courseId=" + "U0003",                  
+            "ProductName": "一起來運動",
+            //"UnitPrice": 100
+          });   
 
-          if (courseDate == selectedDate) {
-            //console.log("matched ", course);
-            dataSource.add({  
-              "課程編號": course[0],
-              "課程名稱": course[1],
-              "老師姓名": course[2],
-              "助教姓名": course[9],          
-              "上課時間": course[3],  
-              "燃燒熱量": course[4],
-              "課程人數": course[6],
-              "課程費用": course[5],
-              "其他說明": course[10],
-              "報名人數": course[7],
-              "繳費人數": course[8],        
-              "url": "actionsheet/course報名.html?courseId=" + "U0003",                  
-              "ProductName": "一起來運動",
-              //"UnitPrice": 100
-            });   
-            
-            courseMember.forEach(function(item, index, array){
-              if (course[0]==item[0]){
-                
-                for (var i=1; i< item.length; i++) {
-                  //console.log(item[i][3],userId[1]);
-                  if (item[i][3]==userId[1]) {
-                    $("#報名按鈕"+course[0]).text("已報名");  
-                    $("#報名按鈕"+course[0]).css("background-color", "grey");                       
-                    $("#報名按鈕"+course[0]).css("border-style", "none");  
-                    setEnabled($("#報名按鈕"+course[0]), false);
-                  }
+          courseMember.forEach(function(item, index, array){
+            if (course[0]==item[0]){
+
+              for (var i=1; i< item.length; i++) {
+                //console.log(item[i][3],userId[1]);
+                if (item[i][3]==userId[1]) {
+                  $("#報名按鈕"+course[0]).text("已報名");  
+                  $("#報名按鈕"+course[0]).css("background-color", "grey");                       
+                  $("#報名按鈕"+course[0]).css("border-style", "none");  
+                  setEnabled($("#報名按鈕"+course[0]), false);
                 }
-              }            
-            });
+              }
+            }            
+          });
+        }
+
+      });       
+    }
+
+
+    function setEnabled($a, Enabled ){
+      $a.each(function(i, a){          
+          var en = a.onclick !== null;        
+          if(en == Enabled)return;
+          if(Enabled){
+              a.onclick = $(a).data('orgClick');            
           }
-                
-        });       
-        
-        
-      }
+          else
+          {
+              $(a).data('orgClick',a.onclick);
+              a.onclick = null;
+          }
+      });
+    }
+
+    function onNavigate() {
+        console.log("Navigate");
+    }
 
 
-      function setEnabled($a, Enabled ){
-        $a.each(function(i, a){          
-            var en = a.onclick !== null;        
-            if(en == Enabled)return;
-            if(Enabled){
-                a.onclick = $(a).data('orgClick');            
-            }
-            else
-            {
-                $(a).data('orgClick',a.onclick);
-                a.onclick = null;
-            }
-        });
-      }
-
-      function onNavigate() {
-          console.log("Navigate");
-      }
-
-      function initData(e) {
-        console.log("init");
-
-        initDataSource();
-
-        $("#courseTable").kendoMobileListView({
-            dataSource: dataSource,
-            pullToRefresh: false,            
-            template: $("#course-template").text()            
-        });
-
-        $("#calendar").kendoCalendar({
-            change: onChange,
-            navigate: onNavigate
-        });
-      }
 
   </script>
 
