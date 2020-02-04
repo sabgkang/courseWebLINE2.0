@@ -279,6 +279,7 @@ function searchExamplesFor(value){
         var responseMsg = this.response;
         
         //responseMsg="API:10 courseData 讀取失敗"; //故意測試錯誤
+        console.log(responseMsg);
         if (responseMsg != "API:10 courseData 讀取失敗") {
           courseData = JSON.parse(this.response);
           //console.log(courseData);
