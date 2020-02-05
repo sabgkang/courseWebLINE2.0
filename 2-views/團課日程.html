@@ -43,7 +43,9 @@
     <a class="km-secondary" data-role="button"
     style="color: gray; margin:20px; font-size: 16px" 
     onclick="取消報名()" id = "取消報名按鈕"
-    >取消報名</a>         
+    >取消報名</a>  
+         
+    <h3>如果顯示資料不完整，請在空白處往下拉一下，再點一下。</h3>       
           
     </div>
   </div>
@@ -62,7 +64,6 @@
 
   <script>
     var dataSource;
-    //data = [];
     
     function initData(e) {
       console.log("init");
@@ -90,15 +91,15 @@
       });
     }    
     
-    
     function 報名課程(courseId){
       ///?API=20&UserName=小華&CourseId=U0002&UserId=U722be0c9c9d36e011c0e556bd2047819&PhoneNumber=09XXXXX333
 
       console.log("報名課程", courseId, userId[1],userPhoneNumber);
+      要報名的課程 = courseId;
       
       courseData.forEach(function(course, index, array){
         if (course[0] == courseId) {
-          console.log(courseId, "is found");
+          //console.log(courseId, "is found");
           $("#報名表格課程編號").text("課程編號: "+course[0]);        
           $("#報名表格課程名稱").text("課程名稱: "+course[1]);  
           $("#報名表格老師姓名").text("老師姓名: "+course[2]);        
@@ -112,6 +113,7 @@
           $("#報名表格繳費人數").text("繳費人數: "+course[8]);          
         }
       });
+      
       
       $("#團課日程Div").hide();
       $("#報名表格").show()
@@ -129,15 +131,6 @@
         var toDel = dataSource.at(0);
         dataSource.remove(toDel);
       }
-    }
-
-     // MM/DD/YYYY ==> YYYY-MM-DD
-    function convertDate(dateStr){ 
-      var dateArr = dateStr.split("/");
-      // Kendo UI Calendar 的日期是類似 2/9/2020，月和日不會補0
-      //if (dateArr[0].length ==1) dateArr[0]= "0"+dateArr[0];
-      //if (dateArr[1].length ==1) dateArr[1]= "0"+dateArr[1];
-      return dateArr[2]+"-"+dateArr[0]+"-"+dateArr[1];
     }
 
     function onChange() {
@@ -164,8 +157,8 @@
             "其他說明": course[10],
             "報名人數": course[7],
             "繳費人數": course[8],        
-            "url": "actionsheet/course報名.html?courseId=" + "U0003",                  
-            "ProductName": "一起來運動",
+            //"url": "2-views/course報名.html?courseId=" + "U0003",                  
+            //"ProductName": "一起來運動",
             //"UnitPrice": 100
           });   
 
@@ -188,28 +181,44 @@
       });       
     }
 
-
-    function setEnabled($a, Enabled ){
-      $a.each(function(i, a){          
-          var en = a.onclick !== null;        
-          if(en == Enabled)return;
-          if(Enabled){
-              a.onclick = $(a).data('orgClick');            
-          }
-          else
-          {
-              $(a).data('orgClick',a.onclick);
-              a.onclick = null;
-          }
-      });
-    }
-
     function onNavigate() {
         console.log("Navigate");
     }
 
+    
+    function 確定報名() {
+      console.log("確定報名 ", userId[1], 要報名的課程, userPhoneNumber);
+      // call API:20 =========================================================================
+      var request = new XMLHttpRequest();
+      var paramToSend = "?API=20&"+"UserName="+userName+"&CourseId="+要報名的課程+"&UserId="+userId[1]+"&PhoneNumber="+userPhoneNumber;
+      console.log(paramToSend); 
+      if (useLocalAPIs) {
+        request.open('GET', 'http://localhost:5000' + paramToSend, true);
+      } else {
+        request.open('GET', 'https://api-linko-sports-center.herokuapp.com/'+paramToSend, true);
+      }      
 
+      request.onload = function() {
+        var responseMsg = this.response;
 
+        console.log(responseMsg);
+        
+        //responseMsg="API:20 會員報名成功"; //故意測試錯誤         
+        if (responseMsg != "API:20 會員報名成功") {
+          console.log(responseMsg);
+          alert("課程報名失敗，請稍後再試，或洽櫃台人員");
+        } else {
+          $("#確定報名按鈕").text("已報名");
+          $("#確定報名按鈕").css("background-color", "grey");                       
+          $("#確定報名按鈕").css("border-style", "none");           
+          setEnabled($("#確定報名按鈕"), false);
+          
+          reloadCourseNeeded = true;
+        }
+      } 
+      request.send();      
+      
+    }
   </script>
 
 
