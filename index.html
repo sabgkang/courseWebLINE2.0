@@ -15,9 +15,7 @@
   <link href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.nova.min.css" rel="stylesheet" />
   <link href="https://kendo.cdn.telerik.com/2020.1.114/styles/kendo.mobile.nova.min.css" rel="stylesheet" />   
 
-<!--  <link href="/kendo-ui/content/shared/styles/console.css" rel="stylesheet" />-->
-<!--  <link href="/kendo-ui/content/mobile/examples.css" rel="stylesheet" />-->
-  <link href="css/examples.css" rel="stylesheet" />
+  <link href="css/courseStyle.css" rel="stylesheet" />
      
   <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
   <script src="https://kendo.cdn.telerik.com/2020.1.114/js/kendo.all.min.js"></script>
@@ -139,6 +137,13 @@
   <script src="js/prettify.js"></script> 
   
   <script>
+    // 中光電竹南廠
+    var 場所位置經度= 24.7118; 
+    var 場所位置緯度= 120.9162;
+    
+    var 目前位置經度;
+    var 目前位置緯度;
+          
     var paramToSend = "";
     var inputParamString = location.search;
     var inputParam = inputParamString.split("&");

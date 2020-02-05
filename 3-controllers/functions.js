@@ -26,15 +26,14 @@ function setEnabled($a, Enabled ){
 function 取得經緯度() {
   navigator.geolocation.getCurrentPosition(function (position) {
     //console.log(position.coords.latitude, position.coords.longitude);
-    var lat = Math.floor(position.coords.latitude * 10000) / 10000;
-    var lon = Math.floor(position.coords.longitude * 10000) / 10000;
-    $("#deleteMe").text("所在位置- 經度: " + String(lat) + ", 緯度: " + String(lon));
+    目前位置經度 = Math.floor(position.coords.latitude * 10000) / 10000;
+    目前位置緯度 = Math.floor(position.coords.longitude * 10000) / 10000;
+    $("#deleteMe").text("所在位置 經度: " + String(目前位置緯度) + ", 緯度: " + String(目前位置緯度));
   });
 }
 
 // 計算 兩點 間的距離
-function calcDistance(lat1, lon1, lat2, lon2) 
-{
+function calcDistance(lat1, lon1, lat2, lon2) {
   var R = 6371000; // meter
   var dLat = toRad(lat2-lat1);
   var dLon = toRad(lon2-lon1);

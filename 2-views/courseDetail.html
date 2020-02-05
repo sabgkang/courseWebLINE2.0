@@ -14,6 +14,11 @@
     <div data-role="view" data-title="課程細節" id="actionsheet-view" data-use-native-scrolling="true" style="font-family:  'Noto Sans TC' " data-show="dataAlreadyShown">
         <!--<h3 id="actionResult">TEST</h3>-->
         <ul data-role="listview" data-source="courseDetail" data-template="courseItemTemplate" class="courseList"></ul>
+        <div style="margin-left:20px; margin-right:20px">
+          <hr>
+          <h3 id="與運動中心距離">與運動中心距離: </h3>
+          <h3 id="課程開始時間">課程開始時間: </h3>
+        </div>
     </div>
 
 
@@ -47,11 +52,6 @@
     </script>
 
     <script>
-      var 場所位置 ={
-        經度:  24.7118, // 中光電竹南廠
-        緯度: 120.9162
-      }
-
       var hrefString = window.location.href;
       var inputParamString = hrefString.split("?");
       var inputParam = inputParamString[2].split("&")
@@ -64,6 +64,14 @@
 
       updateCourseDetail();
 
+      //檢查位置
+      var distance = calcDistance(目前位置經度, 目前位置緯度, 場所位置經度, 場所位置緯度);
+      console.log(distance);
+
+      //檢查日期時間
+      var courseDateArr;
+      var courseTimeStart, courseTimeEnd;
+      
       function updateCourseDetail(){
         courseData.forEach(function(course, ind, arr){
           if (course[0]==courseId) {
@@ -84,14 +92,83 @@
               "繳費人數": course[8],          
             };
             courseDetail.push(courseDetailItem);
+            
+            courseDateArr = course[3].split(" ");
+            courseTimeStart = courseDateArr[1].substring(0,5);
+            courseTimeEnd = courseDateArr[1].substring(courseDateArr[1].length-5,courseDateArr[1].length);            
+            console.log(courseDateArr, courseTimeStart, courseTimeEnd);
           }
         });
       }
       
-      function 繳費(id) {
+      function 繳費() {
         alert("請到櫃檯繳費");
       }
 
+      function 簽到() {
+        console.log("簽到: ", userName, courseId, userId[1], userPhoneNumber);
+        
+        // 考慮使用 library https://js-joda.github.io/js-joda/manual/usage.html
+        //檢查時間
+        var 現在日期及時間 = new Date("2020-2-3 11:00");
+        var 今天日期 = 現在日期及時間.toLocaleDateString();
+        var 現在時間 = 現在日期及時間.toLocaleTimeString();
+        今天日期 = 今天日期.replace(/\//g,"-");
+        var 上下午  = 現在時間.substring(0,2);
+        var 時間切割 = 現在時間.substring(2,現在時間.length).split(":");
+        時間切割[0] = (上下午=="上午")? 時間切割[0]: (parseInt(時間切割[0])+12).toString();
+        
+        現在時間=時間切割[0]+":"+時間切割[1];
+        console.log(今天日期, 現在時間);
+        
+        if ( (courseDateArr[0]==今天日期) &&
+             (現在時間 > courseTimeStart) &&
+             (現在時間 < courseTimeEnd) ) {
+          console.log("可以簽到");
+        } else {
+          console.log("未到課程日期及時間，不可以簽到");
+        }
+
+        //檢查距離
+//        if (distance > 1000) {
+//          alert("距離太遠");
+//          return 1;
+//        }
+        
+        return 1;
+        
+        //.?API=21&UserName&CourseId&UserId&PhoneNumber
+        var request = new XMLHttpRequest();
+        var paramToSend = "?API=21&"+"UserName="+userName+"&CourseId="+courseId+"&UserId="+userId[1]+"&PhoneNumber="+userPhoneNumber;
+        console.log(paramToSend); 
+        if (useLocalAPIs) {
+          request.open('GET', 'http://localhost:5000' + paramToSend, true);
+        } else {
+          request.open('GET', 'https://api-linko-sports-center.herokuapp.com/'+paramToSend, true);
+        }      
+
+        request.onload = function() {
+          var responseMsg = this.response;
+
+          console.log(responseMsg);
+
+          //responseMsg="API:21 會員報名成功"; //故意測試錯誤         
+          if (responseMsg != "API:21 會員簽名成功") {
+            console.log(responseMsg);
+            alert("課程簽到失敗，請稍後再試，或洽櫃台人員");
+          } else {
+            $("#簽到按鈕"+idNum.toString()).text("已簽到");
+            $("#簽到按鈕"+idNum.toString()).css("background-color", "grey");                       
+            $("#簽到按鈕"+idNum.toString()).css("border-style", "none");           
+            setEnabled($("#簽到按鈕"+idNum.toString()), false);
+
+            reloadCourseNeeded = true;
+          }
+        } 
+        request.send();        
+        
+      }
+      
       function dataAlreadyShown(){
         console.log("data-view 已顯示"); 
 
@@ -110,11 +187,21 @@
                 $("#繳費按鈕"+idNum.toString()).text("已繳費");   
                 $("#繳費按鈕"+idNum.toString()).css("background-color", "grey");  
                 $("#繳費按鈕"+idNum.toString()).css("border-style", "none");  
-                setEnabled($('#繳費按鈕'+idNum.toString()), false);              
-              } 
+                setEnabled($('#繳費按鈕'+idNum.toString()), false);     
+              }
+              if (course[i][3]== userId[1] && course[i][2]=="已簽到") {
+                console.log(course[i][2]);
+                $("#簽到按鈕"+idNum.toString()).text("已簽到");   
+                $("#簽到按鈕"+idNum.toString()).css("background-color", "grey");  
+                $("#簽到按鈕"+idNum.toString()).css("border-style", "none");  
+                setEnabled($('#簽到按鈕'+idNum.toString()), false); 
+              }               
             }
           }
         });
+        
+        $("#與運動中心距離").text("與運動中心距離: " + distance.toString());  
+        $("#課程開始時間").text("課程開始時間: "+courseDateArr[0]+" 從 "+courseTimeStart+" 到 "+courseTimeEnd);
       }
 
     </script>
