@@ -214,3 +214,172 @@ function getDataByAPIs(checkDataReady) {
   // =====================================================================================      
 }
 
+function 送出資料() {
+  console.log("送出資料");
+ 
+  if (註冊會員()) {
+    loadCourses = true;
+    getCourseData(navDataSource);
+
+    app.navigate('#:back');
+  }
+}
+
+// 非同步+await
+function callAPI(param, loadingMessage) {
+  return new Promise(function(resolve, reject) {       
+    var request = new XMLHttpRequest();
+    request.open('GET', 'https://api-linko-sports-center.herokuapp.com/'+param, true);
+
+    request.onload = function() {
+      $.loading.end();
+      console.log(this.response);
+
+      resolve(this.response);
+    }
+    // Send API request 
+    $.loading.start(loadingMessage);
+
+    request.send();    
+  });
+}
+
+async function checkUserIdExist() {
+  //Call API:00 檢查 userId 有沒有重複參加 */
+
+  $.loading.start('檢查是否已填寫必要資料');
+  paramToSend = "?API=00" + "&UserId=" + userId[1];
+  var res = await callAPI(paramToSend, '檢查是否已填寫必要資料');
+
+  $.loading.end();
+  if (res == "API:00 會員不存在") {
+    alert("為了讓您更容易使用團體課程，挑戰賽及使用優惠券，請填寫必要資料");
+
+    $("#formUserName").val(decodeURI(displayName[1]));
+    $("#formUserName").attr("disabled", "disabled");
+    app.navigate('#forms');
+  } else {
+    console.log("前往團課");
+    loadCourses = true;
+    getCourseData(navDataSource);
+  }
+}
+
+async function 註冊會員() {
+  console.log("註冊會員");
+  // 檢查資料格式     
+  if (   $("#formUserName").val()        == ""
+      || $("#formUserGender").val()       == ""
+      || $("#formUserBirth").val()        == ""
+      || $("#formUserPhone").val()        == ""
+      || $("#formUserID").val()           == ""
+      || $("#formUserHeight").val()       == ""
+      || $("#formUserWeight").val()       == ""       
+      || $("#formEmergencyContact").val() == ""
+      || $("#formEmergencyPhone").val()   == ""          
+     ) {
+    alert("請填寫必填項目!");
+    //return false;
+  }
+
+  paramToSend = "?API=01" +
+    "&Name="             + $("#formUserName").val() +
+    "&Gender="           + $("#formUserGender").val() +     
+    "&Birth="            + $("#formUserBirth").val() +
+    "&Phone="            + $("#formUserPhone").val() +
+    "&ID="               + $("#formUserID").val() +
+    "&Address="          + $("#formUserAddr").val() +
+    "&UserId="           + userId[1] +        
+    "&PicURL="           + pictureUrl[1] +       
+    "&Height="           + $("#formUserHeight").val()+
+    "&Weight="           + $("#formUserWeight").val()+        
+    "&EmergencyContact=" + $("#formEmergencyContact").val()+
+    "&EmergencyPhone="   + $("#formEmergencyPhone").val();       
+  
+  console.log(paramToSend); 
+  
+  var profile = "請確認會員資料:\n" +
+    "    會員姓名: " + $("#formUserName").text() + "\n" +
+    "    會員姓別: " + $("#formUserGender").val() + "\n" +
+    "    會員生日: " + $("#formUserBirth").val() + "\n" +          
+    "    會員身高: " + $("#formUserHeight").val() + " cm" +"\n" +          
+    "    會員體重: " + $("#formUserWeight").val() + " kg" +"\n" +            
+    "    會員電話: " + $("#formUserPhone").val() + "\n" +
+    "    身分證號: " + $("#formUserID").val() + "\n" +
+    "    會員地址: " + $("#formUserAddr").val() + "\n" +
+    "    緊急聯絡人:" + $("#formEmergencyContact").val() + "\n" +       
+    "    緊急聯絡電話:" + $("#formEmergencyPhone").val();        
+
+  if (confirm(profile)) {
+    // POST to write FTP
+    userName = decodeURI(displayName[1]);
+    var requestFTP = new XMLHttpRequest();   // new HttpRequest instance 
+    var theUrl1 = "https://ugym3dbiking.azurewebsites.net/api/Questionnaire?Code=debug123"
+    var theUrl2 = ""; // 預留給 GET 測試
+    requestFTP.open("POST", theUrl1);
+    requestFTP.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+    // need to handle the response better
+    requestFTP.onload = function() { console.log("aaa", this.response);}  
+
+    var ftpToWrite = {
+      "userId":    userId[1],
+      "nickName":  userName,
+      "gender":    ($("#formUserGender").val()=="女")? 0:1,
+      "birthYear": $("#formUserBirth").val().substring(0,4), //必須是數字。不然寫入會有錯誤
+      "weight":    $("#formUserWeight").val(),
+      "height":    $("#formUserHeight").val(),
+      "score1":    1,
+      "score2":    1,
+      "score3":    1          
+    }
+    console.log(JSON.stringify(ftpToWrite));
+    requestFTP.send(JSON.stringify(ftpToWrite));
+    //requestFTP.send(); // 預留給 GET 測試       
+
+    // end write FTP
+
+    // 寫入會員到 Direbase     
+    var res = await callAPI(paramToSend, '寫入資料');
+
+    if (res == "API:01 會員寫入成功") {
+      alert("資料新增成功，前往團課")
+      // 顯示團課表格
+      console.log("前往團課");
+      location.reload();
+//      loadCourses = true;
+//      getCourseData(navDataSource);
+
+    } else {
+      alert("資料新增失敗，請洽管理員")
+      $("#courseDiv").hide();
+      $("#errorMessage").css("display", "block");
+    }
+
+  };
+};
+
+function checkInputParam() {
+  console.log(inputParam);
+  try {
+    displayName = inputParam[0].split("=");
+    userId = inputParam[1].split("=");
+    pictureUrl = inputParam[2].split("=");
+  } catch (e) {
+    inputError = true;
+  }
+
+  console.log(displayName[1]);
+
+  if (inputError) {
+    alert("輸入參數錯誤");
+    loadCourses = false;
+
+    // 等 #courseDiv 顯示後，再 hide()
+    setTimeout(function(){$("#courseDiv").hide();}, 500);
+
+    $("#errorMessage").css("display", "block"); 
+    return false;
+  }
+    return true;
+}

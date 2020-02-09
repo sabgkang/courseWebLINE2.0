@@ -122,8 +122,8 @@
     margin-left: .6em;
 }
 
-#examples .km-drawer-icon:before,
-#examples .km-drawer-icon:after {
+#courseDiv .km-drawer-icon:before,
+#courseDiv .km-drawer-icon:after {
     font: normal 1em/1em "KendoMobileDemos";
     content: "\e602";
 }

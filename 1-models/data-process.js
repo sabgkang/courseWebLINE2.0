@@ -1,4 +1,5 @@
 var isAndroid = kendo.support.mobileOS.android;
+var loadCourses = false;
 
 // override datasources
 navDataSource = new kendo.data.DataSource({
@@ -63,6 +64,9 @@ searchDataSource = navDataSource;
 
 function getCourseData(data) {
   console.log("getting data");
+  
+  if (loadCourses == false) return 1;
+  
   allDataReady = 0;
   readCourses();
 
@@ -108,10 +112,10 @@ function removeView(e) {
     readCourses(); 
     reloadCourseNeeded = false;
   }
-  if (!e.view.element.data("persist")) {
-    console.log(e);
-    e.view.purge();
-  }
+//  if (!e.view.element.data("persist")) {
+//    console.log(e);
+//    e.view.purge();
+//  }
 
 }
 
@@ -186,7 +190,7 @@ function searchForCourse(value){
 }
 
 window.app = new kendo.mobile.Application($(document.body), {
-  layout: "examples",
+  layout: "courseDiv",
   transition: "slide",
   skin: "nova",
   icon: {

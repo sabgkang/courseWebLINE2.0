@@ -26,7 +26,7 @@
     
 </head>
 
-<body id="examples">
+<body id="body">
   <!-- Google Tag Manager -->
   <!-- remarked by Paul Kang
     <noscript>
@@ -55,6 +55,10 @@
       color: white;
     }
 
+    .NotoSansFont {
+      font-family: 'Noto Sans TC'; 
+    }
+    
     .報名課程title {
       font-size: 18px;
       font-weight: bold;
@@ -75,7 +79,11 @@
     }    
   </style>
 
-  <div data-role="view" data-title="北大林口運動中心團課" style="font-family: 'Noto Sans TC'" id="index" data-layout="" data-show="nullForNow" data-init="initSearch">
+  <div id="errorMessage" style="display: none; margin-top: 2em; color: red; font-weight: bold" align="center">
+    <h3 class="NotoSansFont" style="margin-top: 2em; color: red; font-weight: bold">輸入參數發生錯誤，請洽管理員</h3>
+  </div>
+    
+  <div data-role="view" data-title="我的團課" style="font-family: 'Noto Sans TC'" id="courseDiv" data-layout="" data-show="nullForNow" data-init="initSearch">
     <header data-role="header">
       <div data-role="navbar" id="normal" class="km-accent">
         <!--                <a data-align="left" data-role="button" href="#about" data-rel="drawer" data-icon="drawer-icon"></a>-->
@@ -120,8 +128,82 @@
     <h2 id="deleteMe"></h2>
 
   </div>
+  
+  <div id="forms" data-role="view" data-title="新增資料" data-init="initForm" data-use-native-scrolling="true" style="font-family: 'Noto Sans TC'">
+<!--
+    <header data-role="header">
+      <div data-role="navbar" id="normal" class="km-accent">
+        <span data-role="view-title"></span>
+      </div>
+    </header>
+-->
+    <img src="https://profile.line-scdn.net/0m00af3784725150d454061f6166cf75d95eb255c87861" class="km-thumbnail" style="width: 10em; height: 10em; margin: 1em auto; display: block; float: none;"/>
+       
+<!--    <div style="margin: 1em;" >* 表示必填欄位</div>-->
+    <ul data-role="listview" data-style="inset">
+      <li>
+        <label class="km-label-above">姓名
+            <input id="formUserName" type="text" class="NotoSansFont"/>
+        </label>
+      </li>
+      <li>
+        <label class="km-label-above">性別(必填，Inbody 量測需要)
+          <select id="formUserGender"  name="option" class="NotoSansFont">
+            <option value="男">男</option>
+            <option value="女">女</option>
+          </select>
+        </label>
+      </li>
+      <li>
+        <label class="km-label-above">生日(必填，Inbody 量測需要)
+          <input id="formUserBirth" class="NotoSansFont" type="text"/> 
+        </label> 
+      </li>      
+      <li>
+        <label class="km-label-above">身高(必填，Inbody 量測需要)
+          <input id="formUserHeight" class="NotoSansFont" type="text" placeholder="例如: 180"/> 
+        </label> 
+        <span style="float:left ;margin-bottom: -1em; margin-top: -10px; margin-left: 5em">cm</span>
+      </li> 
+      <li>
+        <label class="km-label-above">體重(必填，Inbody 量測需要)
+          <input id="formUserWeight" class="NotoSansFont" type="text" placeholder="例如: 50"/> 
+        </label> 
+        <span style="float:left ;margin-bottom: -1em; margin-top: -10px; margin-left: 5em">kg</span>
+      </li>
+      <li>
+        <label class="km-label-above">電話(必填，聯絡使用)
+          <input id="formUserPhone" class="NotoSansFont" type="text"/> 
+        </label> 
+      </li>
+      <li>
+        <label class="km-label-above">身分證號(必填，作為會員身份辨識，不用做其他用途)
+          <input id="formUserID" class="NotoSansFont" type="text"/> 
+        </label> 
+      </li>
+      <li>
+        <label class="km-label-above">緊急連絡人(必填，緊急聯絡使用)
+          <input id="formEmergencyContact" class="NotoSansFont" type="text"/> 
+        </label> 
+      </li>
+      <li>
+        <label class="km-label-above">緊急連絡電話(必填，緊急聯絡使用)
+          <input id="formEmergencyPhone" class="NotoSansFont" type="text"/> 
+        </label> 
+      </li>
+      <li>
+        <label class="km-label-above">地址(建議填寫，聯絡使用)
+          <input id="formUserAddr" class="NotoSansFont" type="text"/> 
+        </label> 
+      </li>                                                     
+    </ul>
+    <div align="center">
+      <a data-role="button" class="km-primary" style="color: white; margin:1em; padding-left:3em; padding-right:3em" onclick="送出資料()" >送出資料</a>
+    </div>
+    
+  </div>  
 
-  <div data-id="examples" data-role="layout" data-show="showDemoLayout" data-hide="removeView">
+  <div data-id="courseDiv" data-role="layout" data-show="showDemoLayout" data-hide="removeView">
     <header data-role="header">
       <div data-role="navbar" class="km-accent">
         <a data-align="left" data-icon="arrow-w" href="#/" data-role="backbutton" data-transition="slide reverse"></a>
@@ -166,66 +248,10 @@
     inCourse=[];
     myHistory=[];      
     
-    checkInputParam();
-    checkUserIdExist();
-
-    function checkInputParam() {
-      console.log(inputParam);
-      try {
-        displayName = inputParam[0].split("=");
-        userId = inputParam[1].split("=");
-        pictureUrl = inputParam[2].split("=");
-      } catch (e) {
-        alert("輸入參數錯誤");
-        $("#joinForm").hide();
-        $("#errorMessage").css("display", "block");
-        inputError = true;
-      }
-
-      console.log(displayName[1]);
-      
-      if (!inputError) {
-        console.log(displayName, userId, pictureUrl);
-
-        if (userId[0] == "userId") // && userId[1].length==33 ) {
-          console.log("valid UserId ", userId[1]);
-        //checkUserIdExist();
-        $("#name").text(decodeURI(displayName[1]));
-      } else {
-        $("#joinForm").hide();
-        $("#errorMessage").css("display", "block");
-        alert("無效的 LINE ID!!");
-      }
-    }
+    loadCourses = false; //declared in data-process.js
     
-    // ?displayName=小華&userId=U722be0c9c9d36e011c0e556bd2047819&pictureUrl=www.google.com
-    function checkUserIdExist() {
-      //Call API:00 檢查 userId 有沒有重複參加 */
-
-      paramToSend = "?API=00" + "&UserId=" + userId[1];
-
-      var request = new XMLHttpRequest();
-      if (useLocalAPIs) {
-        request.open('GET', 'http://localhost:5000' + paramToSend, true);
-      } else {
-        request.open('GET', 'https://api-linko-sports-center.herokuapp.com/'+paramToSend, true);
-      }
-
-      request.onload = function() {
-        //$.loading.end();
-        console.log(this.response);
-        if (this.response == "API:00 會員不存在") {
-          alert("為了讓您更容易使用團體課程，挑戰賽及使用優惠券，請填寫必要資料");
-        } else {
-          console.log("前往團課");
-          //readCourses();
-        }
-      }
-      // Send API request 
-      //$.loading.start('檢查是否已填寫必要資料');
-     
-      request.send();
-    }    
+    // checkInputParam() 和 checkUserIdExist() 都是在 functions.js 定義
+    if (checkInputParam()) checkUserIdExist();
         
   </script>
 </body>

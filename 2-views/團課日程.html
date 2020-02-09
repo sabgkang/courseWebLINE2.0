@@ -121,6 +121,7 @@
     }  
 
     function 取消報名(){
+      console.log("取消報名");
       $("#團課日程Div").show();
       $("#報名表格").hide()
     }
@@ -212,8 +213,11 @@
           $("#確定報名按鈕").css("background-color", "grey");                       
           $("#確定報名按鈕").css("border-style", "none");           
           setEnabled($("#確定報名按鈕"), false);
+
+          location.reload();
           
-          reloadCourseNeeded = true;
+          // location.reload() 後就不用再設定 reloadCourseNeeded = true;        
+
         }
       } 
       request.send();      
