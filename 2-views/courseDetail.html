@@ -55,11 +55,7 @@
       var hrefString = window.location.href;
       var inputParamString = hrefString.split("?");
       var inputParam = inputParamString[2].split("&")
-      var courseString = inputParamString[3];
-      //var courseId = inputParam[0].split("=")[1];
-      var courseId = courseString.split("=")[1];
-      
-      //console.log("xxx", courseString);
+      var courseId = inputParamString[inputParamString.length-1].split("=")[1];
 
       //var courseNum = parseInt(courseId.substring(1,5));
       console.log(courseId);
@@ -70,13 +66,13 @@
 
       //檢查位置
       var distance = calcDistance(目前位置經度, 目前位置緯度, 場所位置經度, 場所位置緯度);
-      console.log(distance);
+      console.log("aaa",distance);
 
       //檢查日期時間
       var courseDateArr;
       var courseTimeStart, courseTimeEnd;
       
-      function updateCourseDetail(){
+      function updateCourseDetail(){    
         courseData.forEach(function(course, ind, arr){
           if (course[0]==courseId) {
             idNum++;
@@ -174,14 +170,14 @@
       }
       
       function dataAlreadyShown(){
-        console.log("data-view 已顯示", courseId); 
+        console.log("data-view 已顯示", courseId, courseMember); 
 
         // 查詢是否已繳費
         $("#繳費按鈕"+idNum.toString()).text("請繳費");     
         //$("#繳費按鈕"+idNum.toString()).css("background-color", "grey");  
         //$("#繳費按鈕"+idNum.toString()).css("border-style", "none");              
         //setEnabled($('#繳費按鈕'+idNum.toString()), false);    
-
+        
         courseMember.forEach(function(course, index, array){
           if (course[0]==courseId) {
             for (var i=1; i< course.length;i++){
