@@ -55,7 +55,11 @@
       var hrefString = window.location.href;
       var inputParamString = hrefString.split("?");
       var inputParam = inputParamString[2].split("&")
-      var courseId = inputParam[0].split("=")[1];
+      var courseString = inputParamString[3];
+      //var courseId = inputParam[0].split("=")[1];
+      var courseId = courseString.split("=")[1];
+      
+      //console.log("xxx", courseString);
 
       //var courseNum = parseInt(courseId.substring(1,5));
       console.log(courseId);
@@ -170,7 +174,7 @@
       }
       
       function dataAlreadyShown(){
-        console.log("data-view 已顯示"); 
+        console.log("data-view 已顯示", courseId); 
 
         // 查詢是否已繳費
         $("#繳費按鈕"+idNum.toString()).text("請繳費");     
