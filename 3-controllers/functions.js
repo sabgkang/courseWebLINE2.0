@@ -25,10 +25,10 @@ function setEnabled($a, Enabled ){
 
 function 取得經緯度() {
   navigator.geolocation.getCurrentPosition(function (position) {
-    //console.log(position.coords.latitude, position.coords.longitude);
-    目前位置經度 = Math.floor(position.coords.latitude * 10000) / 10000;
-    目前位置緯度 = Math.floor(position.coords.longitude * 10000) / 10000;
-    $("#deleteMe").text("所在位置 經度: " + String(目前位置緯度) + ", 緯度: " + String(目前位置緯度));
+    console.log(position.coords.latitude, position.coords.longitude);
+    目前位置緯度 = Math.floor(position.coords.latitude * 10000) / 10000;
+    目前位置經度 = Math.floor(position.coords.longitude * 10000) / 10000;
+    $("#deleteMe").text("所在位置 緯度: " + String(目前位置緯度) + ", 經度: " + String(目前位置經度));
   });
 }
 
@@ -256,7 +256,8 @@ async function checkUserIdExist() {
     alert("為了讓您更容易使用團體課程，挑戰賽及使用優惠券，請填寫必要資料");
 
     $("#formUserName").val(decodeURI(displayName[1]));
-    $("#formUserName").attr("disabled", "disabled");
+    $("#formUserName").attr("disabled", "disabled"); 
+    $("#LINE頭像").attr("src", pictureUrl[1]);
     app.navigate('#forms');
   } else {
     console.log("前往團課");
