@@ -112,10 +112,10 @@ function removeView(e) {
     readCourses(); 
     reloadCourseNeeded = false;
   }
-//  if (!e.view.element.data("persist")) {
-//    console.log(e);
-//    e.view.purge();
-//  }
+  if (!e.view.element.data("persist")) {
+    console.log(e);
+    e.view.purge();
+  }
 
 }
 

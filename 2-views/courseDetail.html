@@ -110,13 +110,18 @@
         
         // 考慮使用 library https://js-joda.github.io/js-joda/manual/usage.html
         //檢查時間
-        var 現在日期及時間 = new Date("2020-2-3 11:00");
+        var 現在日期及時間 = new Date();
         var 今天日期 = 現在日期及時間.toLocaleDateString();
         var 現在時間 = 現在日期及時間.toLocaleTimeString();
         今天日期 = 今天日期.replace(/\//g,"-");
         var 上下午  = 現在時間.substring(0,2);
         var 時間切割 = 現在時間.substring(2,現在時間.length).split(":");
         時間切割[0] = (上下午=="上午")? 時間切割[0]: (parseInt(時間切割[0])+12).toString();
+        
+        console.log("bbb", 時間切割[0]);
+        if (時間切割[0]=="24") {
+          時間切割[0] = "12";
+        }
         
         現在時間=時間切割[0]+":"+時間切割[1];
         console.log(今天日期, 現在時間);
@@ -126,16 +131,17 @@
              (現在時間 < courseTimeEnd) ) {
           console.log("可以簽到");
         } else {
-          console.log("未到課程日期及時間，不可以簽到");
+          alert("未到課程日期及時間，不可以簽到");
+          return 1;
         }
 
         //檢查距離
-//        if (distance > 1000) {
-//          alert("距離太遠");
-//          return 1;
-//        }
+        if (distance > 500) {
+          alert("距離運動中心太遠，不可以簽到");
+          return 1;
+        }
         
-        return 1;
+        console.log("可以簽到");
         
         //.?API=21&UserName&CourseId&UserId&PhoneNumber
         var request = new XMLHttpRequest();
